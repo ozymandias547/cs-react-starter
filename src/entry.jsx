@@ -7,9 +7,18 @@ domready(function () {
   
 	var CarGame = React.createClass({
 	
+		getInitialState: function() {
+			return {
+				distance: 0
+			}
+		},
+
 		render: function() {
 			return (
 				<div>
+					<div>
+						Distance: <strong>{this.state.distance}</strong>
+					</div>
 					<div ref="ourgame">Car game</div>
 				</div>
 			)
@@ -17,9 +26,10 @@ domready(function () {
 
 		componentDidMount: function() {
 			
+			var _this = this;
 			var game = new Phaser.Game(800, 600, Phaser.CANVAS, this.refs.ourgame, { create: create, update: update, render: render });
 
-			var groundVertices = [-200,-0,-130.128,5.08323,-89.0526,-0.105309,-31.5464,1.19183,1.31426,5.5156,
+			var groundVertices = [-500,-0,-130.128,5.08323,-89.0526,-0.105309,-31.5464,1.19183,1.31426,5.5156,
 			50.6053,4.21846,87.7897,-2.26719,148.755,-4.42908,200,-0,251.899,4.99306,
 			289.063,13.0285,335.267,18.0508,369.418,9.01079,383.48,14.033,410.6,3.9886,
 			433.702,2.98414,467.853,10.0152,487.942,20.0596,512.048,23.073,545.195,8.00633,
@@ -54,6 +64,7 @@ domready(function () {
 
 			var truckBody;
 			var driveJoints = [];
+			var truckDistance;
 
 			function create() {
 				
@@ -75,17 +86,17 @@ domready(function () {
 				// Make the truck body
 				truckBody = new Phaser.Physics.Box2D.Body(this.game, null, 0, -1*PTM);
 				truckBody.setPolygon(truckVertices);
-					
+				
 				// Make the wheel bodies
 				var wheelBodies = [];
 				wheelBodies[0] = new Phaser.Physics.Box2D.Body(this.game, null, -0.82*PTM, 0.6*-PTM);
 				wheelBodies[1] = new Phaser.Physics.Box2D.Body(this.game, null,  1.05*PTM, 0.6*-PTM);
-				wheelBodies[0].setCircle(0.3*PTM);
-				wheelBodies[1].setCircle(0.3*PTM);
+				wheelBodies[0].setCircle(0.9*PTM);
+				wheelBodies[1].setCircle(0.9*PTM);
 				
 				var frequency = 3.5;
 				var damping = 0.5;	
-				var motorTorque = 2;
+				var motorTorque = 30;
 				var rideHeight = 0.5;
 				
 				// Make wheel joints
@@ -103,6 +114,10 @@ domready(function () {
 
 			function update() {
 				
+				_this.setState({
+					distance: truckBody.x.toFixed(0)
+				});
+
 				var motorSpeed = 50; // rad/s
 				var motorEnabled = true;
 				
